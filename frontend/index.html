@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="so">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nidaamka Bakhaarka — Deeqsan Store</title>
+    <!-- Tailwind CSS (CDN) — qaabaynta guud -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Qaabaynta gaarka ah -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-slate-100 min-h-screen text-slate-800">
+
+<!-- ════════════════ LOGIN SCREEN ════════════════ -->
+<div id="login-screen" class="fixed inset-0 bg-slate-900 flex items-center justify-center z-[100]">
+    <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-2xl max-w-sm w-full mx-4">
+        <div class="flex flex-col items-center mb-6">
+            <div class="ds-logo ds-logo-lg">DS</div>
+            <h1 class="text-2xl font-black text-indigo-900 mt-2">Deeqsan Store</h1>
+            <p class="text-xs text-slate-400 mt-1">Nidaamka Maamulka Bakhaarka</p>
+        </div>
+        <div class="space-y-3">
+            <div>
+                <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Profile-ka Isticmaalaha</label>
+                <select id="login-user" class="w-full p-3 border rounded-xl bg-slate-50 font-semibold text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"></select>
+            </div>
+            <div>
+                <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Password-ka</label>
+                <input type="password" id="login-pass" placeholder="••••••••" class="w-full p-3 border rounded-xl bg-slate-50 text-center tracking-widest font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                <p class="text-[10px] text-slate-400 mt-1 text-center">Maareeye: <span class="font-mono bg-slate-100 px-1 rounded">admin123</span> | Shaqaale: <span class="font-mono bg-slate-100 px-1 rounded">1234</span></p>
+            </div>
+            <button onclick="attemptLogin()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl shadow-lg transition mt-1 active:scale-[0.98]">
+                Furaha Dashboard-ka →
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- ════════════════ MAIN APP ════════════════ -->
+<div id="main-app" class="hidden">
+
+    <header class="bg-indigo-900 text-white px-4 py-3 shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-3">
+            <div class="flex items-center gap-2.5 w-full sm:w-auto justify-between sm:justify-start">
+                <div class="flex items-center gap-2.5">
+                    <div class="ds-logo">DS</div>
+                    <div>
+                        <div class="font-black text-base leading-tight">Deeqsan Store</div>
+                        <div id="role-badge" class="text-[10px] text-indigo-300 font-semibold leading-tight">—</div>
+                    </div>
+                </div>
+                <button onclick="logout()" class="sm:hidden bg-rose-600 hover:bg-rose-700 text-white font-bold px-3 py-1.5 rounded-lg text-xs transition">🔒 Ka bax</button>
+            </div>
+            <div class="flex flex-wrap items-center justify-between sm:justify-end gap-2 w-full sm:w-auto border-t border-indigo-800 pt-2 sm:pt-0 sm:border-0">
+                <div class="bg-indigo-950 px-2.5 py-1.5 rounded-lg flex items-center gap-1.5 text-xs border border-indigo-800">
+                    <span class="text-indigo-300 font-semibold">$1 =</span>
+                    <input type="number" id="exchange-rate" value="8500" onchange="saveExchangeRate()" class="w-14 bg-indigo-900 text-center font-bold rounded p-0.5 text-white focus:outline-none">
+                    <span class="text-indigo-300">SlSh</span>
+                </div>
+                <div class="bg-indigo-950 rounded-lg p-1 flex text-xs font-bold border border-indigo-800">
+                    <button onclick="setGlobalCurrency('USD')" id="toggle-USD" class="px-2.5 py-1 rounded-md bg-white text-indigo-950 shadow">USD</button>
+                    <button onclick="setGlobalCurrency('SlSh')" id="toggle-SlSh" class="px-2.5 py-1 rounded-md text-indigo-300">SlSh</button>
+                </div>
+                <button onclick="logout()" class="hidden sm:block bg-rose-600 hover:bg-rose-700 text-white font-bold px-3 py-1.5 rounded-lg text-xs transition">🔒 Ka bax</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="p-3 sm:p-4 lg:p-6 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
+        <div class="lg:col-span-2 space-y-4 lg:space-y-5 order-2 lg:order-1">
+
+            <!-- Iibka hadda socda -->
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+                <h2 class="text-xs font-bold uppercase text-slate-400 tracking-wider mb-3">Iibka Hadda Socda</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-400 mb-1">Nooca Macamiilka</label>
+                        <select id="customer-type" onchange="toggleCustomerTypeUI()" class="w-full p-2.5 border rounded-lg bg-slate-50 font-semibold text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <option value="Daily">Maalinle (Daily Walk-In)</option>
+                            <option value="Monthly">Billle (Monthly)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-400 mb-1">Dooro Macamiilka</label>
+                        <select id="active-customer-dropdown" class="w-full p-2.5 border rounded-lg bg-slate-50 font-semibold text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"></select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-400 mb-1">Xaaladda Lacagt qabashada</label>
+                        <select id="transaction-status" class="w-full p-2.5 border rounded-lg bg-slate-50 font-semibold text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <option value="paid">Waa uu bixiyay (Paid)</option>
+                            <option value="tab">Diiwaangeli Buugga (Tab)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="daily-cash-panel" class="hidden mt-3 bg-emerald-50 border border-emerald-200 rounded-xl p-3">
+                    <p class="text-xs font-black text-emerald-800 uppercase mb-2">💵 Lacagta Maalinlaha — Geli Lacagta Oo Dhan</p>
+                    <div class="grid grid-cols-1 gap-2">
+                        <div>
+                            <label class="text-[10px] font-bold text-slate-500 block mb-1">Geli Xaddiga Custom-ka ah (SlSh)</label>
+                            <div class="relative">
+                                <input type="number" id="daily-cash-slsh" step="100" placeholder="Geli lacagta Somaliland Shilling ah" class="w-full pl-3 pr-14 py-2 border rounded-lg text-sm font-bold focus:ring-2 focus:ring-emerald-300 focus:outline-none">
+                                <span class="absolute right-2.5 top-2.5 text-[10px] font-bold text-slate-400">SlSh</span>
+                            </div>
+                        </div>
+                    </div>
+                    <button onclick="addDailyCashToCart()" class="mt-2 w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-lg text-xs transition active:scale-[0.99]">
+                        ➕ Ku Dar Alaabta
+                    </button>
+                    <p class="text-[9px] text-emerald-600 mt-1">Macaamiisha Daily Walk-In waxay kaloo ka dooran karaan alaabada Menu-ga hoose.</p>
+                </div>
+            </div>
+
+            <!-- Menu-ga alaabta -->
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+                <div class="flex justify-between items-center mb-3">
+                    <h2 class="text-sm sm:text-base font-bold text-slate-700">Menu-ga Alaabta Bakhaarka</h2>
+                    <button onclick="toggleManualItemEntry()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold px-3 py-1.5 rounded-lg border transition">
+                        ✏️ Geli Gacanta
+                    </button>
+                </div>
+                <div id="manual-item-panel" class="hidden mb-3 bg-blue-50 p-3 rounded-xl border border-blue-200 space-y-2">
+                    <p class="text-xs font-bold text-blue-700 uppercase">Geli Alaab Gacanta (Custom Item)</p>
+                    <div class="grid grid-cols-3 gap-2">
+                        <input type="text" id="manual-item-name" placeholder="Magaca Alaabta" class="col-span-2 p-2 border rounded-lg text-xs">
+                        <input type="number" step="0.01" id="manual-item-price" placeholder="$ Qiime" class="p-2 border rounded-lg text-xs">
+                    </div>
+                    <div class="flex gap-2">
+                        <input type="number" id="manual-item-qty" value="1" min="1" class="w-20 p-2 border rounded-lg text-xs">
+                        <button onclick="addManualItemToCart()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded-lg text-xs">➕ Ku Dar</button>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 sm:gap-3" id="catalog-grid"></div>
+            </div>
+
+            <!-- ══════ QAYBTA MAAMULKA (Manager kaliya) ══════ -->
+            <div id="manager-only-section" class="hidden space-y-4 lg:space-y-5">
+
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                    <div class="flex flex-wrap border-b border-slate-200 bg-slate-50">
+                        <button onclick="showManagerTab('daily-summary')" id="tab-daily-summary" class="tab-btn active flex-1 py-3 text-[11px] sm:text-xs font-bold uppercase tracking-wide rounded-none">📊 Warbixinta</button>
+                        <button onclick="showManagerTab('statements')" id="tab-statements" class="tab-btn flex-1 py-3 text-[11px] sm:text-xs font-bold uppercase tracking-wide rounded-none text-slate-500">📋 Statement</button>
+                        <button onclick="showManagerTab('settings')" id="tab-settings" class="tab-btn flex-1 py-3 text-[11px] sm:text-xs font-bold uppercase tracking-wide rounded-none text-slate-500">⚙️ Maamulka</button>
+                    </div>
+
+                    <!-- TAB: Warbixinta Maalineed -->
+                    <div id="panel-daily-summary" class="p-4 sm:p-5 space-y-4">
+                        <div class="flex flex-col sm:flex-row gap-3 items-start sm:items-end justify-between">
+                            <div>
+                                <h3 class="text-sm font-black text-slate-800">Dib u eegista Iibka Maalineed</h3>
+                                <p class="text-xs text-slate-400">Dooro maalinta aad rabto inaad aaddo</p>
+                            </div>
+                            <div class="flex gap-2 items-center w-full sm:w-auto justify-between sm:justify-end">
+                                <input type="date" id="daily-summary-date" class="p-2 border rounded-lg text-xs font-medium flex-1 sm:flex-none" onchange="renderDailySummary()">
+                                <button onclick="setTodayDate()" class="text-xs bg-indigo-600 text-white font-bold px-3 py-2 rounded-lg">Maanta</button>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                            <div class="bg-indigo-50 border border-indigo-100 rounded-xl p-3 text-center">
+                                <div class="text-[9px] font-bold uppercase text-indigo-400">Tirada Iibka</div>
+                                <div id="ds-count" class="text-xl sm:text-2xl font-black text-indigo-700">0</div>
+                            </div>
+                            <div class="bg-emerald-50 border border-emerald-100 rounded-xl p-3 text-center">
+                                <div class="text-[9px] font-bold uppercase text-emerald-500">La Helay</div>
+                                <div id="ds-paid" class="text-xl sm:text-2xl font-black text-emerald-700">$0</div>
+                            </div>
+                            <div class="bg-rose-50 border border-rose-100 rounded-xl p-3 text-center">
+                                <div class="text-[9px] font-bold uppercase text-rose-400">Deyn/Tab</div>
+                                <div id="ds-tab" class="text-xl sm:text-2xl font-black text-rose-600">$0</div>
+                            </div>
+                            <div class="bg-amber-50 border border-amber-100 rounded-xl p-3 text-center">
+                                <div class="text-[9px] font-bold uppercase text-amber-500">Wadarta Guud</div>
+                                <div id="ds-total" class="text-xl sm:text-2xl font-black text-amber-700">$0</div>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-50 rounded-xl border p-3">
+                            <h4 class="text-xs font-black text-slate-600 uppercase mb-2">Iibka Kashiir kasta</h4>
+                            <div id="ds-cashier-breakdown" class="space-y-1.5"></div>
+                        </div>
+
+                        <div>
+                            <h4 class="text-xs font-black text-slate-600 uppercase mb-2">Dhammaan Macaamiiladda Maanta</h4>
+                            <div class="overflow-x-auto rounded-xl border bg-white">
+                                <table class="w-full text-xs min-w-[500px]">
+                                    <thead>
+                                        <tr class="bg-slate-100 border-b text-slate-500 font-bold uppercase">
+                                            <th class="p-2 text-left">#</th>
+                                            <th class="p-2 text-left">Macaamilka</th>
+                                            <th class="p-2 text-left">Alaabta</th>
+                                            <th class="p-2 text-right">Lacagta</th>
+                                            <th class="p-2 text-center">Nooca Lacag qabashada</th>
+                                            <th class="p-2 text-center">Qaabka</th>
+                                            <th class="p-2 text-center">Kashiirka</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="ds-transactions-body" class="divide-y divide-slate-100"></tbody>
+                                </table>
+                                <div id="ds-empty-msg" class="hidden p-6 text-center text-slate-400 text-sm">Wax iib ah maaha maalintaan la doortay.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TAB: Statement -->
+                    <div id="panel-statements" class="hidden p-4 sm:p-5 space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Macaamilka:</label>
+                                <select id="statement-cust-select" onchange="generateStatementView()" class="w-full p-2 border rounded-lg text-sm bg-slate-50 font-medium"></select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Xilliga:</label>
+                                <select id="statement-period-select" onchange="generateStatementView()" class="w-full p-2 border rounded-lg text-sm bg-slate-50 font-medium">
+                                    <option value="All">Dhammaan waqtiga</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">I tusi:</label>
+                                <select id="statement-show-select" onchange="generateStatementView()" class="w-full p-2 border rounded-lg text-sm bg-slate-50 font-medium">
+                                    <option value="All">Dhammaan iibka</option>
+                                    <option value="tab">Deynta oo kaliya</option>
+                                    <option value="paid">Kuwa la bixiyay</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="bg-amber-50 p-3 sm:p-4 rounded-xl border border-amber-200">
+                            <h4 class="text-xs font-black text-amber-900 uppercase mb-3">💰 Diiwaangeli Lacag uu Macamiilku keenay</h4>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div class="bg-white p-3 rounded-lg border space-y-2">
+                                    <p class="text-xs font-bold text-slate-600">💵 USD (Dollar)</p>
+                                    <div class="flex gap-2">
+                                        <div class="relative flex-1">
+                                            <span class="absolute left-2.5 top-2 font-bold text-slate-400">$</span>
+                                            <input type="number" id="direct-payment-usd" step="0.01" placeholder="0.00" class="w-full pl-6 pr-2 py-1.5 border rounded-lg text-sm font-bold">
+                                        </div>
+                                        <button onclick="collectManualPayment('USD')" class="bg-amber-700 hover:bg-amber-800 text-white font-bold px-3 py-1.5 rounded-lg text-xs shrink-0">Kaydi</button>
+                                    </div>
+                                </div>
+                                <div class="bg-white p-3 rounded-lg border space-y-2">
+                                    <p class="text-xs font-bold text-slate-600">🪙 Somaliland Shilling</p>
+                                    <div class="flex gap-2">
+                                        <div class="relative flex-1">
+                                            <input type="number" id="direct-payment-slsh" step="100" placeholder="0" class="w-full pl-3 pr-12 py-1.5 border rounded-lg text-sm font-bold">
+                                            <span class="absolute right-2 top-2 text-[10px] font-bold text-slate-400">SlSh</span>
+                                        </div>
+                                        <button onclick="collectManualPayment('SlSh')" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-3 py-1.5 rounded-lg text-xs shrink-0">Kaydi</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-3 gap-2">
+                            <div class="bg-slate-50 p-2 rounded-lg text-center border">
+                                <div class="text-[9px] uppercase font-bold text-slate-400">Suuqyo</div>
+                                <div id="summary-visits" class="text-base sm:text-xl font-black text-slate-700">0</div>
+                            </div>
+                            <div class="bg-rose-50 p-2 rounded-lg text-center border border-rose-100">
+                                <div class="text-[9px] uppercase font-bold text-rose-400">Deyn</div>
+                                <div id="summary-tab" class="text-base sm:text-xl font-black text-rose-700">$0.00</div>
+                            </div>
+                            <div class="bg-emerald-50 p-2 rounded-lg text-center border border-emerald-100">
+                                <div class="text-[9px] uppercase font-bold text-emerald-500">Bixiyay</div>
+                                <div id="summary-paid" class="text-base sm:text-xl font-black text-emerald-600">$0.00</div>
+                            </div>
+                        </div>
+
+                        <div class="overflow-x-auto rounded-xl border bg-white">
+                            <table class="w-full border-collapse text-xs min-w-[500px]">
+                                <thead>
+                                    <tr class="bg-slate-100 border-b font-bold uppercase text-slate-500">
+                                        <th class="p-2 text-left w-6">#</th>
+                                        <th class="p-2 text-left">Taariikh</th>
+                                        <th class="p-2 text-left">Alaabta</th>
+                                        <th class="p-2 text-right">Lacag</th>
+                                        <th class="p-2 text-center">Nooca lacag qabashada</th>
+                                        <th class="p-2 text-right">Kashiirka</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="print-table-rows" class="divide-y divide-slate-100"></tbody>
+                            </table>
+                        </div>
+
+                        <div class="flex justify-end">
+                            <div class="w-full sm:w-64 space-y-1 text-sm border-t-2 border-slate-200 pt-3">
+                                <div class="flex justify-between text-slate-500"><span>Paid subtotal</span><span id="print-subtotal-paid">$0.00</span></div>
+                                <div class="flex justify-between text-slate-500"><span>Open tab</span><span id="print-subtotal-tab" class="text-rose-600">$0.00</span></div>
+                                <div class="flex justify-between font-black text-base border-t pt-1"><span>Lagu leeyahay</span><span id="print-total-due">$0.00</span></div>
+                            </div>
+                        </div>
+
+                        <button onclick="triggerPrintRoutine()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl text-sm shadow transition active:scale-[0.99]">
+                            🖨️ Daabac / Save as PDF
+                        </button>
+                    </div>
+
+                    <!-- TAB: Maamulka (Settings) -->
+                    <div id="panel-settings" class="hidden p-4 sm:p-5 space-y-5">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div class="space-y-2">
+                                <h3 class="text-xs font-black uppercase text-slate-600 border-b pb-1">🔐 Passwords-ka</h3>
+                                <select id="change-pass-user" class="w-full p-2 border rounded text-xs bg-slate-50"></select>
+                                <input type="text" id="new-sys-password" placeholder="Password cusub" class="w-full p-2 border rounded text-xs">
+                                <button onclick="updateSystemPassword()" class="w-full bg-indigo-600 text-white font-bold py-2 rounded text-xs">Kaydi</button>
+                            </div>
+                            <div class="space-y-2">
+                                <h3 class="text-xs font-black uppercase text-slate-600 border-b pb-1">👤 Macamiil Cusub</h3>
+                                <input type="text" id="new-cust-name" placeholder="Magaca" class="w-full p-2 border rounded text-xs">
+                                <div class="grid grid-cols-2 gap-2">
+                                    <input type="text" id="new-cust-phone" placeholder="Telefoon" class="p-2 border rounded text-xs">
+                                    <select id="new-cust-type" class="p-2 border rounded text-xs bg-slate-50">
+                                        <option value="Monthly">Bille</option>
+                                        <option value="Daily">Maalinle</option>
+                                    </select>
+                                </div>
+                                <input type="text" id="new-cust-address" placeholder="Deegaanka" class="w-full p-2 border rounded text-xs">
+                                <button onclick="addNewCustomer()" class="w-full bg-emerald-600 text-white font-bold py-2 rounded text-xs">Abuur Macamiilka</button>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div>
+                                <h3 class="text-xs font-black uppercase text-slate-600 border-b pb-1 mb-2">📦 Kudar Alaab Menu-ga</h3>
+                                <div class="space-y-2">
+                                    <input type="text" id="new-item-name" placeholder="Magaca Alaabta" class="w-full p-2 border rounded text-xs">
+                                    <input type="number" step="0.01" id="new-item-price" placeholder="Qiimaha USD ($)" class="w-full p-2 border rounded text-xs">
+                                    <button onclick="addNewProduct()" class="w-full bg-amber-700 text-white font-bold py-2 rounded text-xs">Kaydi Alaabta</button>
+                                </div>
+                                <h3 class="text-xs font-black uppercase text-slate-600 border-b pb-1 mt-4 mb-2">Liiska Alaabta (Masax)</h3>
+                                <div class="bg-slate-50 rounded-lg border max-h-40 overflow-y-auto space-y-1 p-1.5" id="manager-product-list"></div>
+                            </div>
+                            <div>
+                                <h3 class="text-xs font-black uppercase text-slate-600 border-b pb-1 mb-2">👥 Liiska Macamiisha (Masax)</h3>
+                                <div class="bg-slate-50 rounded-lg border max-h-52 overflow-y-auto space-y-1 p-1.5" id="manager-customer-list"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ══════ DALABKA (Cart) ══════ -->
+        <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col justify-between min-h-[400px] lg:min-h-[520px] lg:sticky lg:top-[76px] lg:self-start order-1 lg:order-2">
+            <div>
+                <h2 class="text-base font-bold text-slate-700 pb-2 border-b mb-3">🛒 Dalabka</h2>
+                <div id="cart-container" class="space-y-2 max-h-60 lg:max-h-72 overflow-y-auto"></div>
+            </div>
+            <div class="border-t pt-4 space-y-3 mt-4">
+                <div class="bg-slate-50 p-3 rounded-xl border space-y-1">
+                    <div class="flex justify-between text-xs text-slate-400 font-bold"><span>USD:</span><span id="total-usd-label">$0.00</span></div>
+                    <div class="flex justify-between font-black text-lg sm:text-xl text-indigo-700"><span>Isugayn:</span><span id="active-total-label">$0.00</span></div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-400 mb-1.5">Qaabka Lacag bixinta</label>
+                    <div class="grid grid-cols-3 gap-2">
+                        <button onclick="setPaymentMethod('Zaad')" id="pay-Zaad" class="pay-btn p-2.5 border rounded-lg font-bold text-xs bg-slate-50 hover:bg-indigo-50 transition">Zaad</button>
+                        <button onclick="setPaymentMethod('eDahab')" id="pay-eDahab" class="pay-btn p-2.5 border rounded-lg font-bold text-xs bg-slate-50 hover:bg-indigo-50 transition">eDahab</button>
+                        <button onclick="setPaymentMethod('Cash')" id="pay-Cash" class="pay-btn p-2.5 border rounded-lg font-bold text-xs bg-slate-50 hover:bg-indigo-50 transition">Cash</button>
+                    </div>
+                </div>
+                <button onclick="submitTransaction()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl shadow transition active:scale-[0.99]">💾 Xaqiiji oo Kaydi Iibkan</button>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- ════════════════ STATEMENT PRINT LAYOUT ════════════════ -->
+<div id="statement-print-layout" class="p-4 sm:p-8 bg-white text-black font-sans">
+    <div class="flex justify-between items-start border-b-2 border-black pb-4 mb-6">
+        <div class="flex items-center gap-3">
+            <div style="width:48px;height:48px;background:linear-gradient(135deg,#6366f1,#312e81);border-radius:12px;display:flex;align-items:center;justify-content:center;color:white;font-weight:900;font-size:18px;letter-spacing:-1px;">DS</div>
+            <div>
+                <h1 class="text-xl font-black">DEEQSAN STORE</h1>
+                <p class="text-xs text-slate-500">Hargeisa, Somaliland · Warbixinta Koontada Macamiilka</p>
+            </div>
+        </div>
+        <div class="text-right text-xs text-slate-500">
+            <div class="font-extrabold text-black uppercase">Xogta Macamiilka</div>
+        </div>
+    </div>
+    <div class="grid grid-cols-2 gap-y-2 gap-x-8 text-sm mb-6 bg-slate-50 p-4 rounded-xl border">
+        <div><span class="text-xs uppercase font-bold text-slate-400 block">Magaca</span><span class="font-bold text-base" id="print-cust-name">-</span></div>
+        <div><span class="text-xs uppercase font-bold text-slate-400 block">Xilliga</span><span id="print-period">-</span></div>
+        <div><span class="text-xs uppercase font-bold text-slate-400 block">Telefoon</span><span id="print-cust-phone">-</span></div>
+        <div><span class="text-xs uppercase font-bold text-slate-400 block">Taariikhda</span><span id="print-date">-</span></div>
+        <div class="col-span-2"><span class="text-xs uppercase font-bold text-slate-400 block">Goobta</span><span id="print-cust-address">-</span></div>
+    </div>
+    <table class="w-full border-collapse text-xs mb-6">
+        <thead>
+            <tr class="border-b-2 border-black bg-slate-100 font-bold uppercase text-slate-600">
+                <th class="p-2 text-left w-6">#</th>
+                <th class="p-2 text-left w-20">Taariikh</th>
+                <th class="p-2 text-left">Alaabta / Lacagaha</th>
+                <th class="p-2 text-right w-20">Qiime</th>
+                <th class="p-2 text-center w-14">Nooca Lacag qabashada</th>
+                <th class="p-2 text-right w-16">Kashiirka</th>
+            </tr>
+        </thead>
+        <tbody id="print-table-rows-pdf"></tbody>
+    </table>
+    <div class="flex justify-end mb-8">
+        <div class="w-64 space-y-1.5 text-sm border-t-2 border-slate-300 pt-3">
+            <div class="flex justify-between text-slate-500"><span>Paid subtotal</span><span id="print-subtotal-paid">$0.00</span></div>
+            <div class="flex justify-between"><span>Open tab</span><span id="print-subtotal-tab" class="text-red-600 font-semibold">$0.00</span></div>
+            <div class="flex justify-between font-black text-base border-t border-black pt-1"><span>Lagu leeyahay</span><span id="print-total-due">$0.00</span></div>
+        </div>
+    </div>
+    <div class="grid grid-cols-2 gap-16 text-xs pt-12">
+        <div class="text-center border-t border-dashed border-slate-400 pt-2 text-slate-500">Saxiixa Macamiilka</div>
+        <div class="text-center border-t border-dashed border-slate-400 pt-2 text-slate-500">Saxiixa Maamulka — Deeqsan Store</div>
+    </div>
+</div>
+
+<!-- Logic-ga app-ka -->
+<script src="app.js"></script>
+</body>
+</html>
